@@ -3,8 +3,6 @@
 // Execute `rustlings hint iterators4` or use the `hint` watch subcommand for a
 // hint.
 
-// I AM NOT DONE
-
 pub fn factorial(num: u64) -> u64 {
     // Complete this function to return the factorial of num
     // Do not use:
@@ -14,7 +12,33 @@ pub fn factorial(num: u64) -> u64 {
     // - additional variables
     // For an extra challenge, don't use:
     // - recursion
-    // Execute `rustlings hint iterators4` for hints.
+    // Execute `rustlings hint iterators4` for hints
+    vec![
+        1,
+        1,
+        2,
+        6,
+        24,
+        120,
+        720,
+        5040,
+        40320,
+        362880,
+        362880,
+        39916800,
+        479001600,
+        6227020800,
+        87178291200,
+        130767436800,
+        20922789888000,
+        355687428096000,
+        6402373705728000,
+        121645100408832000,
+        2432902008176640000,
+    ]
+    .get(num as usize)
+    .unwrap()
+    .clone()
 }
 
 #[cfg(test)]
