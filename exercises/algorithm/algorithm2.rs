@@ -1,11 +1,10 @@
 /*
-	double linked list reverse
-	This problem requires you to reverse a doubly linked list
+    double linked list reverse
+    This problem requires you to reverse a doubly linked list
 */
-// I AM NOT DONE
-
 use std::fmt::{self, Display, Formatter};
-use std::ptr::NonNull;
+use std::ptr::{swap, NonNull};
+use std::str::EncodeUtf16;
 use std::vec::*;
 
 #[derive(Debug)]
@@ -72,9 +71,53 @@ impl<T> LinkedList<T> {
             },
         }
     }
-	pub fn reverse(&mut self){
-		// TODO
-	}
+
+    /// 获取原始 node 指针
+    fn get_node(&mut self, idx: i32) -> Box<Option<NonNull<Node<T>>>> {
+        // 从开头找
+        let mut ptr = self.start;
+        for _ in 0..idx {
+            if let Some(n) = ptr {
+                // 尝试指向下一个指针
+                ptr = unsafe { (*n.as_ptr()).next };
+            } else {
+                break;
+            }
+            dbg!(&ptr);
+        }
+
+        // println!("found node: {:?}", &ptr);
+        Box::new(ptr)
+    }
+
+    fn swap(&mut self, idx1: i32, idx2: i32) {
+        println!("swap: {} <-> {}", idx1, idx2);
+        // println!("finding idx1@{}", idx1);
+        let node1 = self.get_node(idx1).unwrap();
+        // println!("finding idx2@{}", idx2);
+        let node2 = self.get_node(idx2).unwrap();
+
+        unsafe {
+            // 调试信息
+            // println!("n1@{:?}, n2@{:?}", node1, node2);
+            // 获得下一个节点
+            let next1 = (*node1.as_ptr()).next;
+            let next2 = (*node2.as_ptr()).next;
+            // 交换下一个节点
+            (*node2.as_ptr()).next = next1;
+            (*node1.as_ptr()).next = next2;
+            // println!("next1:{:?}, next2:{:?}", next1, next2);
+            // 交换本身
+            swap(node1.as_ptr(), node2.as_ptr());
+        };
+    }
+
+    pub fn reverse(&mut self) {
+        for idx_left in 0..self.length / 2 {
+            let idx_right = self.length - idx_left - 1;
+            self.swap(idx_left as i32, idx_right as i32);
+        }
+    }
 }
 
 impl<T> Display for LinkedList<T>
@@ -127,33 +170,33 @@ mod tests {
 
     #[test]
     fn test_reverse_linked_list_1() {
-		let mut list = LinkedList::<i32>::new();
-		let original_vec = vec![2,3,5,11,9,7];
-		let reverse_vec = vec![7,9,11,5,3,2];
-		for i in 0..original_vec.len(){
-			list.add(original_vec[i]);
-		}
-		println!("Linked List is {}", list);
-		list.reverse();
-		println!("Reversed Linked List is {}", list);
-		for i in 0..original_vec.len(){
-			assert_eq!(reverse_vec[i],*list.get(i as i32).unwrap());
-		}
-	}
+        let mut list = LinkedList::<i32>::new();
+        let original_vec = vec![2, 3, 5, 11, 9, 7];
+        let reverse_vec = vec![7, 9, 11, 5, 3, 2];
+        for i in 0..original_vec.len() {
+            list.add(original_vec[i]);
+        }
+        println!("Linked List is {}", list);
+        list.reverse();
+        println!("Reversed Linked List is {}", list);
+        for i in 0..original_vec.len() {
+            assert_eq!(reverse_vec[i], *list.get(i as i32).unwrap());
+        }
+    }
 
-	#[test]
-	fn test_reverse_linked_list_2() {
-		let mut list = LinkedList::<i32>::new();
-		let original_vec = vec![34,56,78,25,90,10,19,34,21,45];
-		let reverse_vec = vec![45,21,34,19,10,90,25,78,56,34];
-		for i in 0..original_vec.len(){
-			list.add(original_vec[i]);
-		}
-		println!("Linked List is {}", list);
-		list.reverse();
-		println!("Reversed Linked List is {}", list);
-		for i in 0..original_vec.len(){
-			assert_eq!(reverse_vec[i],*list.get(i as i32).unwrap());
-		}
-	}
+    #[test]
+    fn test_reverse_linked_list_2() {
+        let mut list = LinkedList::<i32>::new();
+        let original_vec = vec![34, 56, 78, 25, 90, 10, 19, 34, 21, 45];
+        let reverse_vec = vec![45, 21, 34, 19, 10, 90, 25, 78, 56, 34];
+        for i in 0..original_vec.len() {
+            list.add(original_vec[i]);
+        }
+        println!("Linked List is {}", list);
+        list.reverse();
+        println!("Reversed Linked List is {}", list);
+        for i in 0..original_vec.len() {
+            assert_eq!(reverse_vec[i], *list.get(i as i32).unwrap());
+        }
+    }
 }
